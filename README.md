@@ -1,4 +1,4 @@
-﻿# Luma Port
+﻿# Photo Palette
 
 一个中文优先的本地 HEIC 风格工具站首版。把整个 `heic-style-studio` 文件夹放到任意静态网站托管即可运行。
 
@@ -21,3 +21,4 @@ python -m http.server 8000 --directory heic-style-studio
 - 无 JavaScript 时的说明 fallback
 
 这是实验性工具，请保留原片。`NOTICE.md` 说明了上游 HEIC 解析模块的来源和许可证。
+
