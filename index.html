@@ -1,0 +1,112 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1726">
+  <meta name="description" content="在设备本地为兼容的 iPhone HEIC 照片准备摄影风格与质感颗粒元数据。照片不会上传。">
+  <meta property="og:title" content="Luma Port · HEIC 风格工具">
+  <meta property="og:description" content="本地处理 iPhone HEIC，保留原片，输出可继续编辑的副本。">
+  <meta property="og:type" content="website">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2394f5c9'/%3E%3Cpath d='M18 43V21h8v8h12v-8h8v22h-8v-8H26v8z' fill='%230d1726'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <title>Luma Port · HEIC 风格工具</title>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Luma Port 首页">
+        <span class="brand-mark" aria-hidden="true">L</span>
+        <span><strong>Luma Port</strong><small>HEIC PHOTO TOOL</small></span>
+      </a>
+      <div class="header-actions">
+        <span class="privacy-pill"><i></i><span data-copy="localBadge">仅在本机处理</span></span>
+        <button class="text-button" id="languageButton" type="button">EN</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow" data-copy="eyebrow">给旧照片一个新的编辑入口</p>
+          <h1 data-copy="title">把 iPhone 的<br><em>风格调色盘</em>带回旧照片</h1>
+          <p class="hero-lede" data-copy="lede">选择一张兼容的 HEIC，Luma Port 会在你的设备上准备好摄影风格与质感颗粒数据。原片不离开设备，输出始终是副本。</p>
+          <div class="hero-meta">
+            <span><b>01</b><span data-copy="metaLocal">本地处理</span></span>
+            <span><b>02</b><span data-copy="metaPixels">不重编码像素</span></span>
+            <span><b>03</b><span data-copy="metaCopy">保留原片</span></span>
+          </div>
+        </div>
+        <div class="hero-orbit" aria-hidden="true">
+          <div class="orbit-ring ring-one"></div><div class="orbit-ring ring-two"></div>
+          <div class="orbit-core"><span>HEIC</span><small>LOCAL</small></div>
+          <span class="orbit-label label-one">PHOTO<br>STYLE</span>
+          <span class="orbit-label label-two">TEXTURE<br>GRAIN</span>
+        </div>
+      </section>
+
+      <section class="workspace-card" aria-labelledby="workspaceTitle">
+        <div class="workspace-topline">
+          <div>
+            <p class="section-kicker">LUMA / WORKSPACE</p>
+            <h2 id="workspaceTitle" data-copy="workspaceTitle">准备你的照片</h2>
+          </div>
+          <span class="version-tag">v0.5 · local build</span>
+        </div>
+
+        <div class="stepper" aria-label="处理步骤">
+          <div class="step active"><span>1</span><b data-copy="stepChoose">选择</b></div>
+          <div class="step-line"></div>
+          <div class="step"><span>2</span><b data-copy="stepCheck">检查</b></div>
+          <div class="step-line"></div>
+          <div class="step"><span>3</span><b data-copy="stepExport">导出</b></div>
+        </div>
+
+        <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-describedby="dropHint">
+          <div class="drop-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+          <h3 data-copy="dropTitle">拖入 HEIC 照片</h3>
+          <p id="dropHint" data-copy="dropHint">或者选择来源。你可以一次加入多张照片。</p>
+          <div class="source-buttons">
+            <button class="primary-button" id="libraryButton" type="button"><span class="button-icon">▧</span><span data-copy="library">照片图库</span></button>
+            <button class="secondary-button" id="browseButton" type="button"><span class="button-icon">↗</span><span data-copy="browse">浏览文件</span></button>
+          </div>
+          <p class="drop-footnote" data-copy="dropFootnote">建议使用原始 HEIC 文件；截图、JPEG 和部分 App 导出的副本无法处理。</p>
+        </div>
+        <input id="libraryInput" type="file" accept="image/heic,image/heif,.heic,.heif" multiple hidden>
+        <input id="browseInput" type="file" multiple hidden>
+
+        <div class="quality-row">
+          <label class="toggle-label"><input id="qualityToggle" type="checkbox" checked><span class="toggle-ui"></span><span data-copy="quality">智能匹配光线与色调</span></label>
+          <button class="help-button" id="qualityHelp" type="button" aria-expanded="false">?</button>
+          <p class="quality-help" id="qualityHelpText" hidden data-copy="qualityHelp">首次开启会下载一个小型解码组件；照片仍只在本机读取。关闭后会使用中性设置，速度更快。</p>
+        </div>
+
+        <div class="queue-head" id="queueHead" hidden>
+          <div><span class="section-kicker" data-copy="queueKicker">PROCESS QUEUE</span><strong id="queueCount">0 张照片</strong></div>
+          <button class="clear-button" id="clearButton" type="button" data-copy="clear">清空</button>
+        </div>
+        <div class="queue" id="queue" aria-live="polite"></div>
+        <div class="empty-state" id="emptyState"><span>✦</span><p data-copy="empty">还没有加入照片。你的文件不会被上传。</p></div>
+      </section>
+
+      <section class="trust-strip">
+        <div><span class="trust-icon">⌁</span><div><b data-copy="trustLocalTitle">真正的本地处理</b><p data-copy="trustLocalBody">照片字节不会发送到服务器。页面只在需要时加载解码组件。</p></div></div>
+        <div><span class="trust-icon">◌</span><div><b data-copy="trustPixelTitle">保留图像像素</b><p data-copy="trustPixelBody">工具改写 HEIC 元数据，尽量避免重新压缩主图像。</p></div></div>
+        <div><span class="trust-icon">＋</span><div><b data-copy="trustCopyTitle">永远输出副本</b><p data-copy="trustCopyBody">原片不会被覆盖。处理前请保留一份备份。</p></div></div>
+      </section>
+
+      <section class="details-grid">
+        <article class="detail-card highlight-card"><span class="card-number">01</span><h2 data-copy="compatTitle">先知道是否兼容</h2><p data-copy="compatBody">支持 iPhone 拍摄的 HEIC，以及两种常见的照片 tile 布局。没有内嵌缩略图、已转成 JPEG 或被其他 App 重存的文件可能会被拒绝。</p><div class="compat-list"><span class="compat-good">✓ HEIC / HEIF</span><span class="compat-good">✓ iPhone 原片</span><span class="compat-neutral">iOS 27 才能看到质感/颗粒</span></div></article>
+        <article class="detail-card"><span class="card-number">02</span><h2 data-copy="phoneTitle">在 iPhone 上</h2><ol><li data-copy="phoneOne">先点“照片图库”尝试选择原片。</li><li data-copy="phoneTwo">如果被识别成非 HEIC，请从“分享 → 存储到文件”后改用“浏览文件”。</li><li data-copy="phoneThree">完成后点“存储到照片”，再在照片 App 中打开副本。</li></ol></article>
+        <article class="detail-card"><span class="card-number">03</span><h2 data-copy="limitsTitle">你需要知道的限制</h2><ul><li data-copy="limitOne">这是实验性、非 Apple 官方工具。</li><li data-copy="limitTwo">只处理静态 HEIC，不包含实况照片的动态和声音。</li><li data-copy="limitThree">输出效果可能和原生机型的微调不完全一致。</li></ul></article>
+      </section>
+
+      <footer class="site-footer"><span>© 2026 Luma Port · local-first photo tooling</span><span><a href="NOTICE.md">来源与许可</a><span class="dot">·</span><a href="https://github.com/nathanatgit/Shalielie" target="_blank" rel="noreferrer">参考项目</a></span></footer>
+    </main>
+  </div>
+  <noscript><div style="max-width:640px;margin:24px auto;padding:16px;border:1px solid #304765;border-radius:12px;color:#ecf3fb;background:#101c2d">Luma Port 需要启用 JavaScript 才能在本机读取和处理 HEIC 文件。照片不会上传。</div></noscript>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+
