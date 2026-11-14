@@ -44,7 +44,7 @@ HEIC 识别通过不代表内部布局受支持。原有 tile/HDR、内嵌缩略
 
 仓库通过现有 GitHub Pages 分支发布流程部署。整套文件无需构建，保留 `.nojekyll`、`src/`、`profiles/`、图标及许可证即可。
 
-当前版本标记为 `20261115-3`，Worker 缓存为 `photo-palette-v5-icons-1`。每次发布应同步更新缓存名称和 HTML 中的 JS/CSS 版本参数。Worker 预缓存全部核心资源后才切换，确保页面、模块和 profile 属于同一版本。
+当前版本标记为 `20261115-4`，Worker 缓存为 `photo-palette-v6-picker-1`。每次发布应同步更新缓存名称和 HTML 中的 JS/CSS 版本参数。Worker 预缓存全部核心资源后才切换，确保页面、模块和 profile 属于同一版本。
 
 已有队列时更新提示用户先下载再刷新；空队列可以自动刷新。首次从旧版升级时需要重新加载页面。不要先清除站点数据来验收升级，以免绕过旧缓存迁移流程。
 
@@ -55,3 +55,13 @@ HEIC 识别通过不代表内部布局受支持。原有 tile/HDR、内嵌缩略
 验证结果与真实设备验收步骤见 [docs/VALIDATION.md](docs/VALIDATION.md)。核心模块及 donor profiles 来自 MIT 许可的 [nathanatgit/Shalielie](https://github.com/nathanatgit/Shalielie)，详细归属和许可证见 [NOTICE.md](NOTICE.md)、[UPSTREAM-LICENSE.txt](UPSTREAM-LICENSE.txt)。
 
 网站作者：[YUMYULUCK](https://github.com/YUMYULUCK)
+
+## 相册选择与旧照片排查
+
+主相册入口使用 `image/*`，JPEG 提示中保留一个 HEIC 专用选择器供重试。WebKit 的部分配置仅在接受通用图像或无类型限制时请求 Current 表示；另一些配置仍固定请求 Compatible。网页无权控制该系统标志，不能保证任何一种 accept 都能拿到原片。参考 [WebKit 选择器源码](https://github.com/WebKit/WebKit/blob/main/Source/WebKit/UIProcess/ios/forms/WKFileUploadPanel.mm)。
+
+收到 JPEG 时仍严格拒绝进入 HEIC 处理流程。存储到文件不是格式转换：如果原片是 JPEG，它仍然是 JPEG。先用照片 App 的信息面板核对原片，再判断是系统转码还是源格式限制。旧照片没有按年份被禁用；真正 HEIC 的内部布局、HDR、缩略图限制仍按原有规则检查。
+
+Live Photo 包含静态照片与配对视频。本网页仍只导出静态 HEIC 副本，不保留配对视频、动态和声音。此次没有添加 JPEG 转 HEIC、普通滤镜，也没有引入未经验证的旧 HEIC 处理分支。
+
+必须在真实 iPhone（用户反馈为 iPhone 17 Pro）上分别测试：通用相册入口、HEIC 专用重试、文件导入。记录 iOS 版本、照片 App 中的源格式与页面收到的实际格式。自动化测试能确认字节分流和按钮行为，无法代替系统相册测试，也不能据此宣称相册原片问题已彻底解决。

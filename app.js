@@ -9,7 +9,7 @@ import { identifyFormat } from "./src/file-format.js";
 const $ = (id) => document.getElementById(id);
 const els = {
   drop: $("dropZone"), library: $("libraryButton"), browse: $("browseButton"),
-  libraryInput: $("libraryInput"), browseInput: $("browseInput"), queue: $("queue"),
+  heicInput: $("heicInput"), libraryInput: $("libraryInput"), browseInput: $("browseInput"), queue: $("queue"),
   queueHead: $("queueHead"), queueCount: $("queueCount"), empty: $("emptyState"),
   clear: $("clearButton"), quality: $("qualityToggle"), lang: $("languageButton"),
   qualityHelp: $("qualityHelp"), qualityHelpText: $("qualityHelpText"),
@@ -18,6 +18,13 @@ const els = {
 
 const COPY = {
   zh: {
+    libraryHint:"选取照片后自动检查与处理",
+    statusJpegHelp:"可能发生了系统转换，也可能原片本来就是 JPG。当前照片未被处理。可重试相册；仍失败时查看说明。",
+    statusJpegAgainHelp:"这次系统仍提供 JPG，网页无法取得 HEIC 原片，原片也可能本来就是 JPG。当前照片未被处理，帮助中有可选的获取方法。",
+    originalWarning:"存储到“文件”不会把 JPG 变成 HEIC。分享时选择“当前”是为了尽量保留原来的格式；原片本来是 JPG，保存后仍是 JPG。修改后缀也无法恢复 HEIC 编码或摄影风格元数据。",
+    liveNotice:"仅处理静态照片，实况照片的动态和声音不会包含在副本中。",
+    photoInfoHint:"旧照片能否处理取决于实际格式与内部结构，不按拍摄年份限制。可在照片 App 打开原片，点信息按钮查看文件信息。",
+    originalHelpTitle:"相册返回 JPG？查看原片获取方法",
     brandName:"照片调色盘",
     brandHome:"照片调色盘首页",
     documentTitle:"照片调色盘 · HEIC 摄影风格工具",
@@ -26,7 +33,6 @@ const COPY = {
     title:"旧照片。<br><em>新的表达。</em>",
     lede:"把 iPhone 摄影风格带回你的照片。<br>保留原片，让灵感继续。",
     workspaceTitle:"准备你的照片",
-    libraryHint:"自动识别实际格式 · 支持批量",
     browseHint:"iPhone：照片 → 分享 → 选项 → 当前 → 存储到文件。",
     dropFootnote:"相册可能提供转换后的 JPG。我们会检查实际格式，仅处理兼容的 HEIC 原片。",
     queueKicker:"处理队列",
@@ -45,7 +51,6 @@ const COPY = {
     phoneOne:"先点“从相册选择”尝试选择 HEIC 原片。",
     phoneTwo:"如果得到 JPG，按工作区“获取原始 HEIC 的方法”保存到文件，再用“从文件导入”重试。",
     statusJpeg:"当前照片以 JPG 格式导入",
-    statusJpegHelp:"可能是 iPhone 在选择照片时进行了格式转换，也可能原片本来就是 JPG。本工具需要兼容的 HEIC 原片，当前文件未被处理。",
     statusPng:"当前照片以 PNG 格式导入",
     statusPngHelp:"PNG（例如截图）不包含本工具所需的 HEIC 结构，当前文件未被处理。请选择原始 HEIC 照片。",
     statusAvif:"当前文件是 AVIF，暂不支持",
@@ -65,19 +70,24 @@ const COPY = {
     formatLabel:"实际格式",
     retryLibrary:"重新从相册选择",
     showOriginalHelp:"查看获取原始 HEIC 的方法",
-    originalHelpTitle:"获取原始 HEIC 的方法",
     originalStep1:"打开 iPhone 照片 App。",
     originalStep2:"选择原始照片，点击分享。",
     originalStep3:"在分享“选项”中优先选择“当前”格式，而非“最兼容”。",
     originalStep4:"选择“存储到文件”，保存到“文件”App。",
     originalStep5:"返回 照片调色盘，点击下方“浏览文件”导入。",
-    originalWarning:"如果仍得到 JPG，原片可能不是 HEIC。修改后缀无法恢复 HEIC 编码或摄影风格元数据；请保留原片。不同 iOS 版本的选项名称和位置可能不同。",
     browseOriginal:"浏览文件",
     updateAvailable:"新版已就绪。刷新后使用更新；刷新会清空当前队列，请先下载已完成的副本。",
     refreshApp:"刷新使用新版",
     localBadge:"仅在本机处理", navWorkspace:"工作区", navGuide:"使用说明", ribbonLocal:"照片留在设备", ribbonBatch:"支持批量", ribbonCopy:"只输出副本", ribbonOffline:"可离线打开", metaLocal:"本地处理", metaPixels:"不重编码像素", metaCopy:"保留原片", stepChoose:"选择", stepCheck:"检查", stepExport:"导出", dropTitle:"拖入 HEIC 照片", quality:"智能匹配光线与色调", qualityHelp:"首次开启会下载一个小型解码组件；照片仍只在本机读取。关闭后会使用中性设置，速度更快。", clear:"清空", empty:"还没有加入照片。你的文件不会被上传。", trustLocalTitle:"真正的本地处理", trustLocalBody:"照片字节不会发送到服务器。页面只在需要时加载解码组件。", trustPixelTitle:"保留图像像素", trustPixelBody:"工具改写 HEIC 元数据，尽量避免重新压缩主图像。", trustCopyTitle:"永远输出副本", trustCopyBody:"原片不会被覆盖。处理前请保留一份备份。", compatTitle:"先知道是否兼容", compatBody:"支持 iPhone 拍摄的 HEIC，以及两种常见的照片 tile 布局。没有内嵌缩略图、已转成 JPEG 或被其他 App 重存的文件可能会被拒绝。", phoneTitle:"在 iPhone 上", phoneThree:"完成后点“存储到照片”，再在照片 App 中打开副本。", limitsTitle:"你需要知道的限制", limitOne:"这是实验性、非 Apple 官方工具。", limitTwo:"只处理静态 HEIC，不包含实况照片的动态和声音。", limitThree:"输出效果可能和原生机型的微调不完全一致。", statusQueued:"等待处理", statusReading:"正在读取", statusChecking:"正在检查兼容性", statusDecoding:"正在分析光线", statusPatching:"正在准备副本", statusReady:"已完成", statusBadType:"这不是 HEIC / HEIF 文件", statusNoThumb:"没有内嵌缩略图，网页无法创建副本", statusNoThumbHelp:"这份 HEIC 缺少网页端创建副本所需的缩略图。请从 iPhone 照片 App 重新导出原片；如果仍失败，需要在电脑使用命令行版本。", statusTexture:"这张照片已经有质感与颗粒，无需重复处理", statusTextureHelp:"文件已经包含质感/颗粒数据，不需要重复处理。可直接使用原片，或换一张还没有处理过的 HEIC。", statusUnsupported:"暂不支持这张 HEIC（可能是机型布局或文件结构不匹配）", statusDecoder:"解码器加载失败，已改用中性设置", statusDone:"处理完成", detailNative:"保留原有摄影风格", detailTexture:"已添加质感与颗粒", detailMatched:"调色盘已匹配照片", detailNeutral:"已使用中性调色盘", detailDecoder:"解码器未加载，已使用中性设置", download:"下载副本", share:"存储到照片", shareBlocked:"无法打开共享菜单", processError:"处理失败，请保留原片并换一张原始 HEIC 重试", processErrorHelp:"请保留原片，先关闭“智能匹配光线与色调”再试；若仍失败，换用原始 HEIC。", queueCount:(n)=>`${n} 张照片` 
   },
   en: {
+    libraryHint:"Choose photos. We check and process them here.",
+    statusJpegHelp:"The system may have converted the photo, or the original may already be JPG. This photo has not been processed. Try Photos again; help is available if it still fails.",
+    statusJpegAgainHelp:"The system still provided JPG, so the website cannot access an original HEIC. The original may also be JPG. This photo has not been processed. Optional recovery steps are available in help.",
+    originalWarning:"Save to Files does not turn JPG into HEIC. Choosing Current when sharing is intended to preserve the existing format; an original JPG remains JPG. Renaming the extension cannot restore HEIC encoding or Photographic Styles metadata.",
+    liveNotice:"Still photos only. Live Photo motion and audio are not included in the exported copy.",
+    photoInfoHint:"Compatibility depends on the actual format and internal structure, not the capture year. Open the original in Photos and tap Info to inspect its file information.",
+    originalHelpTitle:"Received JPG? How to get the original file",
     brandName:"Photo Palette",
     brandHome:"Photo Palette home",
     documentTitle:"Photo Palette · HEIC Style Tool",
@@ -86,7 +96,6 @@ const COPY = {
     title:"Old photos.<br><em>New possibilities.</em>",
     lede:"Bring iPhone Photographic Styles to your photos.<br>Keep the original. Keep creating.",
     workspaceTitle:"Prepare your photos",
-    libraryHint:"Actual format detection · Batch ready",
     browseHint:"On iPhone: Photos → Share → Options → Current → Save to Files.",
     dropFootnote:"Photos may provide a converted JPG. We check the actual format and only process compatible original HEIC files.",
     queueKicker:"PROCESS QUEUE",
@@ -105,7 +114,6 @@ const COPY = {
     phoneOne:"Try “Choose from Photos” to select an original HEIC.",
     phoneTwo:"If you receive a JPG, follow “How to get the original HEIC” in the workspace, save it to Files, then use “Import from Files”.",
     statusJpeg:"This photo was imported as JPG",
-    statusJpegHelp:"iPhone may have converted the photo during selection, or the original may already be JPG. This tool requires a compatible original HEIC; this file has not been processed.",
     statusPng:"This photo was imported as PNG",
     statusPngHelp:"PNG files (such as screenshots) do not contain the HEIC structure this tool requires. This file has not been processed. Choose an original HEIC photo.",
     statusAvif:"This file is AVIF and is not supported",
@@ -125,13 +133,11 @@ const COPY = {
     formatLabel:"Actual format",
     retryLibrary:"Choose from Photos again",
     showOriginalHelp:"How to get the original HEIC",
-    originalHelpTitle:"How to get the original HEIC",
     originalStep1:"Open the Photos app on iPhone.",
     originalStep2:"Select the original photo and tap Share.",
     originalStep3:"In sharing Options, prefer “Current” format instead of “Most Compatible”.",
     originalStep4:"Choose “Save to Files” and save it in the Files app.",
     originalStep5:"Return to Photo Palette and tap “Browse files” below to import it.",
-    originalWarning:"If the file is still JPG, the original may not be HEIC. Renaming the extension cannot restore HEIC encoding or Photographic Styles metadata. Keep the original. Option names and locations may vary by iOS version.",
     browseOriginal:"Browse files",
     updateAvailable:"An update is ready. Refresh to use it; refreshing clears this queue, so download completed copies first.",
     refreshApp:"Refresh to update",
@@ -174,7 +180,10 @@ function showOriginalHelp() {
   els.originalHelp.querySelector("summary").focus({ preventScroll:true });
 }
 function addImportHelp(item) {
-  for (const [key, onClick] of [["retryLibrary", () => els.libraryInput.click()], ["showOriginalHelp", showOriginalHelp]]) {
+  // Keep one retry action. Switching picker hints is internal; both routes must
+  // still pass byte detection, and neither guarantees original HEIC delivery.
+  const choices = [["retryLibrary", () => (item.source === "library" ? els.heicInput : els.libraryInput).click()], ["showOriginalHelp", showOriginalHelp]];
+  for (const [key, onClick] of choices) {
     const button = document.createElement("button");
     button.type = "button"; button.className = "share-button";
     button.dataset.copy = key; button.textContent = t(key);
@@ -195,7 +204,7 @@ async function getProfile(name) {
   if (!response.ok) throw new Error("profile unavailable");
   return loadProfile(new Uint8Array(await response.arrayBuffer()));
 }
-function makeItem(file) {
+function makeItem(file, source) {
   const el = document.createElement("article"); el.className = "queue-item";
   const chip = document.createElement("div"); chip.className = "file-chip"; chip.textContent = "…";
   const info = document.createElement("div"); info.className = "file-info";
@@ -207,7 +216,7 @@ function makeItem(file) {
   info.append(name, formatEl, status, help, progress);
   const actions = document.createElement("div"); actions.className = "file-actions";
   el.append(chip, info, actions); els.queue.append(el);
-  const item = { file, el, chip, formatEl, format:null, cancelled:false, statusEl: status, helpEl: help, progress, actions, statusKey:"statusQueued", statusDetail:"", statusParts:[], helpKey:"", download:null, share:null, url:null };
+  const item = { file, source, el, chip, formatEl, format:null, cancelled:false, statusEl: status, helpEl: help, progress, actions, statusKey:"statusQueued", statusDetail:"", statusParts:[], helpKey:"", download:null, share:null, url:null };
   item.set = (key, detail = "", cls = "", parts = [], helpKey = "") => { item.statusKey = key; item.statusDetail = detail; item.statusParts = parts; item.helpKey = helpKey; renderItemStatus(item); status.className = `file-status ${cls}`; };
   item.setProgress = (value) => { progress.style.setProperty("--progress", `${value}%`); progress.classList.toggle("visible", value < 100); };
   item.addDownload = (blob, filename) => { item.url = URL.createObjectURL(blob); objectUrls.add(item.url); const a = document.createElement("a"); a.href = item.url; a.download = filename; a.className = "download-link"; a.textContent = t("download"); actions.append(a); item.download = a; };
@@ -225,7 +234,7 @@ async function processItem(item) {
     renderItemFormat(item);
     if (item.format !== "heic" && item.format !== "heif") {
       const status = { jpeg:"statusJpeg", png:"statusPng", avif:"statusAvif", iso:"statusIso", malformed:"statusMalformed", empty:"statusEmpty" }[item.format] || "statusBadType";
-      item.set(status, "", "error"); item.setProgress(100);
+      item.set(status, "", "error", [], item.format === "jpeg" && item.source === "heic" ? "statusJpegAgainHelp" : ""); item.setProgress(100);
       addImportHelp(item); return;
     }
     item.set("statusChecking"); item.setProgress(28); let d;
@@ -267,15 +276,27 @@ async function runQueue() {
     setStep(items.some((item) => item.statusKey === "statusDone") ? 3 : 1);
   }
 }
-function addFiles(fileList) {
-  const fresh = [...fileList].filter((file) => !items.some((item) => item.file.name === file.name && item.file.size === file.size && item.file.lastModified === file.lastModified));
-  fresh.forEach((file) => items.push(makeItem(file))); refreshQueue(); if (fresh.length) runQueue();
+function addFiles(fileList, source = "files") {
+  let added = false;
+  for (const file of fileList) {
+    const existing = items.find((item) => item.file.name === file.name && item.file.size === file.size && item.file.lastModified === file.lastModified);
+    if (existing) {
+      if (!existing.statusEl.classList.contains("error")) continue;
+      // A retry may return the exact same JPG. Recheck it in the same row instead
+      // of silently dropping the selection or filling the queue with duplicates.
+      existing.file = file; existing.source = source; existing.format = null;
+      existing.actions.replaceChildren(); existing.set("statusQueued");
+    } else items.push(makeItem(file, source));
+    added = true;
+  }
+  refreshQueue(); if (added) runQueue();
 }
 function clearQueue() { items.splice(0).forEach((item) => { item.cancelled = true; if (item.url) { URL.revokeObjectURL(item.url); objectUrls.delete(item.url); } item.el.remove(); }); refreshQueue(); setStep(1); }
 
 els.library.addEventListener("click", () => els.libraryInput.click());
 els.browse.addEventListener("click", () => els.browseInput.click());
-els.libraryInput.addEventListener("change", () => { addFiles(els.libraryInput.files); els.libraryInput.value = ""; });
+els.libraryInput.addEventListener("change", () => { addFiles(els.libraryInput.files, "library"); els.libraryInput.value = ""; });
+els.heicInput.addEventListener("change", () => { addFiles(els.heicInput.files, "heic"); els.heicInput.value = ""; });
 els.browseInput.addEventListener("change", () => { addFiles(els.browseInput.files); els.browseInput.value = ""; });
 els.drop.addEventListener("click", (event) => { if (event.target.closest("button")) return; els.browseInput.click(); });
 els.drop.addEventListener("keydown", (event) => { if (event.target !== els.drop) return; if (event.key === "Enter" || event.key === " ") { event.preventDefault(); els.browseInput.click(); } });
