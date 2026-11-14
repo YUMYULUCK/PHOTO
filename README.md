@@ -1,24 +1,55 @@
-﻿# Photo Palette
+# 照片调色盘 · Photo Palette
 
-一个中文优先的本地 HEIC 风格工具站首版。把整个 `heic-style-studio` 文件夹放到任意静态网站托管即可运行。
+一个在设备本机为兼容 iPhone HEIC 原片准备摄影风格与质感/颗粒元数据的网站。原片不覆盖，照片字节不上传，结果始终作为副本下载或分享。
 
-## 本地预览
+- 中文界面显示「照片调色盘」，英文界面显示「Photo Palette」。
+- 白色留白界面、蓝色操作按钮与通透相框主视觉。
+- 相册选择、文件导入、拖拽、多文件队列、下载与支持时的系统分享。
+- 通过文件内容识别 HEIC/HEIF、JPEG、PNG；不依赖文件后缀或 MIME。
+- JPEG/PNG 不进入 HEIC 元数据处理流程，不会改后缀伪造成功。
+- 保留现有摄影风格、质感/颗粒与智能匹配功能；没有添加普通滤镜系统。
 
-```bash
-python -m http.server 8000 --directory heic-style-studio
+## 本地运行
+
+在仓库根目录执行：
+
+```sh
+python -m http.server 8000
 ```
 
-然后打开 `http://localhost:8000/`。需要通过 HTTP 服务打开，直接双击 HTML 会阻止 ES module 和本地资源加载。
+然后打开 `http://localhost:8000/`。需要 HTTP 服务，不能直接双击 HTML。通过 `?lang=en` 可直接打开英文界面。
 
-## 这版包含
+## 从 iPhone 获取 HEIC 原片
 
-- 照片图库 / 浏览文件双入口
-- 拖拽和多文件队列
-- HEIC 魔数检查和兼容性错误说明
-- 本地处理进度、下载副本、移动端分享
-- 智能光线分析开关
-- 中英文切换、深色界面、PWA 离线缓存
-- 无 JavaScript 时的说明 fallback
+先尝试「从相册选择」。文件选择器的 `accept` 仅是类型提示，无法保证 iOS 不转换格式。
 
-这是实验性工具，请保留原片。`NOTICE.md` 说明了上游 HEIC 解析模块的来源和许可证。
+如果实际收到 JPG：
 
+1. 打开照片 App，选择原片并分享。
+2. 在「选项」中优先选择「当前」，避免「最兼容」。
+3. 存储到「文件」App。
+4. 返回网站，使用「从文件导入」。
+
+如果仍是 JPG，原片可能本来就不是 HEIC。改后缀无法恢复 HEIC 编码或摄影风格元数据。
+
+## 兼容性与隐私
+
+HEIC 识别通过不代表内部布局受支持。原有 tile/HDR、内嵌缩略图、元数据结构要求保持不变；缺少所需结构的照片会明确拒绝。仅处理静态照片，不包含 Live Photo 动态和声音。
+
+首次智能匹配可能从 CDN 下载解码组件，但照片只在本机读取。核心页面和 profile 支持离线；解码组件首次加载需要联网，离线时可关闭智能匹配使用中性设置。
+
+这是实验性、非 Apple 官方工具。请保留原片，并在真实 iPhone 的照片 App 中确认输出副本的摄影风格和质感控件。
+
+## GitHub Pages 与缓存
+
+仓库通过现有 GitHub Pages 分支发布流程部署。整套文件无需构建，保留 `.nojekyll`、`src/`、`profiles/`、图标及许可证即可。
+
+当前版本标记为 `20261115-2`，Worker 缓存为 `photo-palette-v4-design-1`。每次发布应同步更新缓存名称和 HTML 中的 JS/CSS 版本参数。Worker 预缓存全部核心资源后才切换，确保页面、模块和 profile 属于同一版本。
+
+已有队列时更新提示用户先下载再刷新；空队列可以自动刷新。首次从旧版升级时需要重新加载页面。不要先清除站点数据来验收升级，以免绕过旧缓存迁移流程。
+
+## 验证与致谢
+
+验证结果与真实设备验收步骤见 [docs/VALIDATION.md](docs/VALIDATION.md)。核心模块及 donor profiles 来自 MIT 许可的 [nathanatgit/Shalielie](https://github.com/nathanatgit/Shalielie)，详细归属和许可证见 [NOTICE.md](NOTICE.md)、[UPSTREAM-LICENSE.txt](UPSTREAM-LICENSE.txt)。
+
+网站作者：[YUMYULUCK](https://github.com/YUMYULUCK)
