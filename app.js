@@ -150,7 +150,7 @@ function renderItemStatus(item) { renderItemFormat(item); const parts = item.sta
 function applyCopy() {
   document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
   document.title = t("documentTitle");
-  $("appManifest").href = lang === "en" ? "manifest-en.webmanifest" : "manifest.webmanifest";
+  $("appManifest").href = (lang === "en" ? "manifest-en.webmanifest" : "manifest.webmanifest") + "?v=20261115-3";
   document.querySelector('meta[property="og:title"]').content = t("documentTitle");
   document.querySelector(".brand").setAttribute("aria-label", t("brandHome"));
   els.lang.setAttribute("aria-label", lang === "zh" ? "Switch to English" : "切换到中文");

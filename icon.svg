@@ -1,6 +1,19 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="128" fill="#1d1d1f"/>
-  <circle cx="256" cy="256" r="146" fill="none" stroke="#0071e3" stroke-width="34"/>
-  <path d="M240 145v222M240 145h66c51 0 82 26 82 69s-31 69-82 69h-66" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="366" cy="214" r="9" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="照片调色盘：叠影相框">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3199ff"/><stop offset="1" stop-color="#0061e7"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b7dfff"/><stop offset="1" stop-color="#6eb5ff"/></linearGradient>
+    <clipPath id="photo"><rect x="218" y="146" width="178" height="232" rx="16"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="118" fill="url(#base)"/>
+  <g transform="rotate(-11 211 252)"><rect x="104" y="111" width="214" height="278" rx="29" fill="url(#glass)" stroke="#c8e5ff" stroke-width="10"/></g>
+  <g transform="rotate(11 307 263)">
+    <rect x="198" y="128" width="218" height="278" rx="29" fill="#003d9a" opacity=".13" transform="translate(0 9)"/>
+    <rect x="198" y="128" width="218" height="278" rx="29" fill="#fff"/>
+    <g clip-path="url(#photo)">
+      <rect x="218" y="146" width="178" height="232" fill="#e3f1ff"/>
+      <circle cx="346" cy="202" r="19" fill="#75b8ff"/>
+      <path d="M204 333 270 244 328 311 362 275 412 335V391H204Z" fill="#78b9ff"/>
+      <path d="m210 359 73-67 47 42 81-49v106H210Z" fill="#0878ed"/>
+    </g>
+  </g>
 </svg>

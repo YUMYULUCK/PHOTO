@@ -1,5 +1,5 @@
-const CACHE = "photo-palette-v4-design-1";
-const CORE = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./manifest-en.webmanifest", "./profiles/index.json", "./profiles/45-15.zip", "./profiles/48-12.zip", "./icon.svg", "./icons/icon-192.png", "./icons/icon-512.png", "./src/box.js", "./src/bplist.js", "./src/decode.js", "./src/exif.js", "./src/heif.js", "./src/port.js", "./src/styles.js", "./src/texture.js", "./src/zip.js", "./src/file-format.js"];
+const CACHE = "photo-palette-v5-icons-1";
+const CORE = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./manifest-en.webmanifest", "./profiles/index.json", "./profiles/45-15.zip", "./profiles/48-12.zip", "./icon.svg", "./icons/icon-16.png", "./icons/icon-32.png", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png", "./src/box.js", "./src/bplist.js", "./src/decode.js", "./src/exif.js", "./src/heif.js", "./src/port.js", "./src/styles.js", "./src/texture.js", "./src/zip.js", "./src/file-format.js"];
 const coreUrls = new Set(CORE.map((path) => new URL(path, self.location.href).href));
 
 // Install the entire release before taking control. Bypass the HTTP cache too;
