@@ -13,6 +13,7 @@ function injectScript() {
   return new Promise((resolve, reject) => {
     if (globalThis.libheif) return resolve();
     const s = document.createElement("script");
+    s.crossOrigin = "anonymous";
     s.src = LIBHEIF_URL;
     s.onload = () => (globalThis.libheif ? resolve()
       : reject(new Error("libheif loaded but did not register")));

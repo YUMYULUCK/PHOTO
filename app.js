@@ -1,10 +1,11 @@
-import { loadProfile } from "./src/zip.js";
+﻿import { loadProfile } from "./src/zip.js";
 import { patch, selectProfile, UNSUPPORTED } from "./src/port.js";
 import { discoverHeic } from "./src/heif.js";
 import { addTexture, hasTexture } from "./src/texture.js";
 import { decodeToRgb, loadLibheif } from "./src/decode.js";
 
 import { identifyFormat } from "./src/file-format.js";
+import { canRebuild, rebuildStyles, COMPAT_UNSUPPORTED } from "./src/compat.js";
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -144,6 +145,34 @@ const COPY = {
     localBadge:"Processed on this device", navWorkspace:"Workspace", navGuide:"Guide", ribbonLocal:"Photos stay here", ribbonBatch:"Batch ready", ribbonCopy:"Copies only", ribbonOffline:"Works offline", metaLocal:"Local first", metaPixels:"Pixels preserved", metaCopy:"Copy out", stepChoose:"Choose", stepCheck:"Check", stepExport:"Export", dropTitle:"Drop HEIC photos", quality:"Match light and tone intelligently", qualityHelp:"The first run downloads a small decoder. Photos are still read locally. Turn this off for a faster neutral pass.", clear:"Clear", empty:"No photos yet. Your files are never uploaded.", trustLocalTitle:"Actually local", trustLocalBody:"Photo bytes never go to a server. A decoder is loaded only when needed.", trustPixelTitle:"Pixels stay intact", trustPixelBody:"The tool rewrites HEIC metadata and avoids recompressing the main image.", trustCopyTitle:"Always exports a copy", trustCopyBody:"Originals are never overwritten. Keep a backup before processing.", compatTitle:"Know the limits first", compatBody:"Works with iPhone HEIC files and two common photo tile layouts. Missing thumbnails, JPEG conversions and re-saved copies may be rejected.", phoneTitle:"On iPhone", phoneThree:"When ready, choose “Save to Photos”, then open the copy in Photos.", limitsTitle:"A few limits", limitOne:"Experimental, unofficial software; it is not made by Apple.", limitTwo:"Still HEIC only. Live Photo motion and audio are not included.", limitThree:"Results may not match native model adjustments exactly.", statusQueued:"Waiting", statusReading:"Reading", statusChecking:"Checking compatibility", statusDecoding:"Analyzing light", statusPatching:"Preparing copy", statusReady:"Complete", statusBadType:"This is not a HEIC / HEIF file", statusNoThumb:"No embedded thumbnail; the web version cannot create a copy", statusNoThumbHelp:"This HEIC is missing the thumbnail needed by the web version. Export the original again from Photos; if it still fails, use the desktop command-line version.", statusTexture:"This photo already has Texture/Grain", statusTextureHelp:"This file already contains Texture/Grain data. Keep the original, or choose an HEIC that has not been processed yet.", statusUnsupported:"This HEIC is not supported yet", statusDecoder:"Decoder failed to load; used neutral settings", statusDone:"Processed", detailNative:"Native Photographic Styles preserved", detailTexture:"Texture/Grain added", detailMatched:"Palette matched to image", detailNeutral:"Neutral palette settings", detailDecoder:"Decoder unavailable; neutral settings used", download:"Download copy", share:"Save to Photos", shareBlocked:"Could not open sharing", processError:"Processing failed. Keep the original and try another HEIC", processErrorHelp:"Keep the original, turn off smart light matching, and try again. If it still fails, choose an original HEIC.", queueCount:(n)=>`${n} photo${n===1?"":"s"}`
   }
 };
+Object.assign(COPY.zh, {
+  qualityHelp:"首次可能下载本机处理组件，照片不会上传。关闭后使用中性匹配；部分照片仍需生成辅助图。",
+  compatBody:"保留已有原生摄影风格；也可在本机为部分缺少辅助图的 HEIC 补齐结构。并非所有 HEIC 都兼容，特殊尺寸可能仍有细绿边。",
+  statusCompatDecoding:"正在准备兼容处理", statusCompatLoading:"首次加载本机兼容组件（约 32 MB）",
+  statusCompatEncoding:"正在本机生成辅助图", statusCompatAssembling:"正在写入摄影风格与质感",
+  statusCompatDone:"兼容副本已生成", detailCompat:"保留主图与 HDR",
+  compatGeneratedHelp:"请在照片 App 中检查副本效果。原片未覆盖。",
+  compatEdgeHelp:"这张照片使用兼容处理，特殊尺寸可能仍有细绿边。请在照片 App 中检查颜色、边缘及保存后的效果；原片已保留。",
+  statusCompatRefresh:"本机处理组件需要刷新后启用", statusCompatRefreshHelp:"新版已就绪，请先下载其他结果，再点下方“刷新使用新版”，然后重新选择这张照片。",
+  statusCompatUnavailable:"兼容组件未能完成处理", statusCompatUnavailableHelp:"首次使用需要联网下载本机组件。请刷新后重试；没有生成副本，也没有上传照片。",
+  statusCompatDecode:"暂时无法读取这张 HEIC 的图像", statusCompatDecodeHelp:"当前浏览器未能解码这份原片，无法可靠生成所需辅助图。原文件没有被修改。",
+  statusCompatBrowser:"当前浏览器暂不支持这项兼容处理", statusCompatBrowserHelp:"可尝试在 Safari 完整页面打开。带原生风格的 HEIC 仍可按原有流程处理；当前照片未生成副本，原片未修改。",
+  statusUnsupportedHelp:"已识别为 HEIC，但当前版本无法可靠处理其内部结构。没有生成副本，原片保持不变。",
+});
+Object.assign(COPY.en, {
+  qualityHelp:"Local processing components may be downloaded on first use. Photos are never uploaded. Turning this off uses neutral matching; some photos still need auxiliary image generation.",
+  compatBody:"Preserves native Photographic Styles and can rebuild auxiliary structures for some HEIC files locally. Support is limited; nonstandard sizes may retain thin green edges.",
+  statusCompatDecoding:"Preparing compatibility processing", statusCompatLoading:"Loading local compatibility component (about 32 MB, first use)",
+  statusCompatEncoding:"Generating auxiliary image on this device", statusCompatAssembling:"Writing Photographic Styles and Texture",
+  statusCompatDone:"Compatibility copy generated", detailCompat:"Primary and HDR preserved",
+  compatGeneratedHelp:"Check the copy in Photos before using it. Your original is unchanged.",
+  compatEdgeHelp:"Compatibility processing was used. Nonstandard sizes may retain thin green edges. Check color, borders and the saved result in Photos. Your original is unchanged.",
+  statusCompatRefresh:"Refresh to enable local processing", statusCompatRefreshHelp:"The update is ready. Download other results, choose “Refresh to update” below, then select this photo again.",
+  statusCompatUnavailable:"Compatibility processing could not finish", statusCompatUnavailableHelp:"First use needs internet to download local processing components. Refresh and retry. No copy was generated and no photo was uploaded.",
+  statusCompatDecode:"This HEIC could not be decoded", statusCompatDecodeHelp:"This browser could not read the original image to generate the required auxiliary image. Your original is unchanged.",
+  statusCompatBrowser:"This browser cannot run compatibility processing", statusCompatBrowserHelp:"Try opening the full page in Safari. Native-style HEIC files can still use the existing processing path. No copy was generated for this photo; your original is unchanged.",
+  statusUnsupportedHelp:"This is a HEIC, but its internal structure cannot be processed reliably by this version. No copy was generated. Your original is unchanged.",
+});
 let lang = new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh";
 let profileIndex = null;
 let decodeAvailable = null;
@@ -156,7 +185,7 @@ function renderItemStatus(item) { renderItemFormat(item); const parts = item.sta
 function applyCopy() {
   document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
   document.title = t("documentTitle");
-  $("appManifest").href = (lang === "en" ? "manifest-en.webmanifest" : "manifest.webmanifest") + "?v=20261115-3";
+  $("appManifest").href = (lang === "en" ? "manifest-en.webmanifest" : "manifest.webmanifest") + "?v=20261115-5";
   document.querySelector('meta[property="og:title"]').content = t("documentTitle");
   document.querySelector(".brand").setAttribute("aria-label", t("brandHome"));
   els.lang.setAttribute("aria-label", lang === "zh" ? "Switch to English" : "切换到中文");
@@ -224,7 +253,7 @@ function makeItem(file, source) {
   renderItemStatus(item);
   return item;
 }
-function refreshQueue() { els.queueHead.hidden = items.length === 0; els.empty.hidden = items.length > 0; els.queueCount.textContent = t("queueCount", items.length); }
+function refreshQueue() { els.queueHead.hidden = items.length === 0; $("progressSteps").hidden = items.length === 0; els.empty.hidden = items.length > 0; els.queueCount.textContent = t("queueCount", items.length); }
 async function processItem(item) {
   setStep(2); item.set("statusReading"); item.setProgress(15); await new Promise(requestAnimationFrame);
   try {
@@ -240,22 +269,45 @@ async function processItem(item) {
     item.set("statusChecking"); item.setProgress(28); let d;
     try { d = discoverHeic(bytes); }
     catch (error) { item.set("statusUnsupported", "", "error"); item.setProgress(100); return; }
-    let data, suffix = "_LumaPort.HEIC", details = [];
+    let data, suffix = "_LumaPort.HEIC", details = [], compatibility = null;
     if (d.stylesItem !== null) {
       if (hasTexture(d.infos)) { item.set("statusTexture", "", "error"); item.setProgress(100); return; }
       item.set("statusPatching"); item.setProgress(58); ({ data } = addTexture(bytes)); details = ["detailNative", "detailTexture"];
     } else {
-      if (d.thumbnail === null) { item.set("statusNoThumb", "", "error"); item.setProgress(100); return; }
       if (!profileIndex) { profileIndex = await (await fetch("profiles/index.json")).json(); }
-      const profileName = selectProfile(profileIndex, d.primaryTiles.length, d.hdrTiles.length);
-      const profile = await getProfile(profileName);
-      const canDecode = els.quality.checked ? await ensureDecode(bytes) : false;
-      item.set(canDecode ? "statusDecoding" : "statusPatching"); item.setProgress(canDecode ? 47 : 58); await new Promise(requestAnimationFrame);
-      const opts = canDecode ? { decode: decodeToRgb, sceneStats:"target", lightMaps:"target" } : { sceneStats:"donor" };
-      const result = await patch(bytes, profile, opts); data = result.data;
-      details = [result.report?.decoded ? "detailMatched" : "detailNeutral", result.report?.texture !== "off" ? "detailTexture" : ""];
-      details = details.filter(Boolean);
-      if (result.report?.decodeError && canDecode) details.push("detailDecoder");
+      let profileName = null;
+      try { profileName = selectProfile(profileIndex, d.primaryTiles.length, d.hdrTiles.length); } catch (error) { if (error.message !== UNSUPPORTED) throw error; }
+      if (d.thumbnail === null || !profileName) {
+        if (!canRebuild(bytes,d)) throw Error(COMPAT_UNSUPPORTED);
+        if (!globalThis.crossOriginIsolated || !globalThis.SharedArrayBuffer) {
+          const reloaded = performance.getEntriesByType("navigation")[0]?.type === "reload";
+          throw Error(reloaded && navigator.serviceWorker?.controller ? "compat-browser" : "compat-refresh");
+        }
+        item.abort = new AbortController();
+        const [{createCompatDecoder},{encodeAuxiliary},profile] = await Promise.all([
+          import("./src/compat-decode.js"), import("./src/compat-encoder.js"), getProfile("48-12")
+        ]);
+        item.set("statusCompatDecoding"); item.setProgress(36);
+        const decoder = await createCompatDecoder(bytes,d,{signal:item.abort.signal});
+        const progress = key => { if (!item.cancelled) { item.set(key); item.setProgress(key === "statusCompatAssembling" ? 80 : key === "statusCompatEncoding" ? 60 : 42); } };
+        try {
+          const result = await rebuildStyles(bytes,profile,{
+            decode:(w,h,stored)=>decoder.sample(w,h,stored),
+            encode:(rgb,w,h)=>encodeAuxiliary(rgb,w,h,decoder.space,{signal:item.abort.signal,onProgress:progress}),
+            quality:els.quality.checked,signal:item.abort.signal,onProgress:progress,
+          });
+          data=result.data; compatibility=result.report;
+        } finally { decoder.dispose(); }
+        details=["detailCompat","detailTexture",els.quality.checked?"detailMatched":"detailNeutral"];
+      } else {
+        const profile = await getProfile(profileName);
+        const canDecode = els.quality.checked ? await ensureDecode(bytes) : false;
+        item.set(canDecode ? "statusDecoding" : "statusPatching"); item.setProgress(canDecode ? 47 : 58); await new Promise(requestAnimationFrame);
+        const opts = canDecode ? { decode: decodeToRgb, sceneStats:"target", lightMaps:"target" } : { sceneStats:"donor" };
+        const result = await patch(bytes, profile, opts); data = result.data;
+        details = [result.report?.decoded ? "detailMatched" : "detailNeutral", result.report?.texture !== "off" ? "detailTexture" : ""].filter(Boolean);
+        if (result.report?.decodeError && canDecode) details.push("detailDecoder");
+      }
     }
     item.setProgress(88); await new Promise(requestAnimationFrame);
     if (item.cancelled) return;
@@ -263,8 +315,18 @@ async function processItem(item) {
     const outputFile = new File([data], outputName, { type:"image/heic" });
     if (navigator.canShare?.({ files:[outputFile] })) item.addShare(outputFile);
     item.addDownload(new Blob([data], { type:"image/heic" }), outputName);
-    item.set("statusDone", "", "ok", details.filter(Boolean)); item.setProgress(100); setStep(3);
-} catch (error) { if (item.cancelled) return; console.error(error); item.set(error.message === UNSUPPORTED ? "statusUnsupported" : "processError", "", "error"); item.setProgress(100); }
+    item.set(compatibility ? "statusCompatDone" : "statusDone", "", "ok", details.filter(Boolean), compatibility ? (compatibility.edgeCaution ? "compatEdgeHelp" : "compatGeneratedHelp") : ""); item.setProgress(100); setStep(3);
+    const head = els.queueHead.getBoundingClientRect();
+    if (items[0] === item && head.top >= 0 && head.top < innerHeight && item.el.getBoundingClientRect().bottom > innerHeight)
+      item.el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"nearest"});
+} catch (error) {
+    if (item.cancelled) return;
+    console.error(error);
+    const message = error.message;
+    const status = message === UNSUPPORTED || message === COMPAT_UNSUPPORTED ? "statusUnsupported" : message === "compat-browser" ? "statusCompatBrowser" : message === "compat-refresh" ? "statusCompatRefresh" : message === "compat-decode" || message === "compat-color" ? "statusCompatDecode" : message.startsWith("compat-") ? "statusCompatUnavailable" : "processError";
+    if (message === "compat-refresh") els.updateNotice.hidden = false;
+    item.set(status, "", "error"); item.setProgress(100);
+  }
 }
 async function runQueue() {
   if (processing) return; processing = true;
@@ -273,7 +335,7 @@ async function runQueue() {
     while ((next = items.find((item) => item.statusKey === "statusQueued"))) await processItem(next);
   } finally {
     processing = false;
-    setStep(items.some((item) => item.statusKey === "statusDone") ? 3 : 1);
+    setStep(items.some((item) => item.statusKey === "statusDone" || item.statusKey === "statusCompatDone") ? 3 : 1);
   }
 }
 function addFiles(fileList, source = "files") {
@@ -289,9 +351,12 @@ function addFiles(fileList, source = "files") {
     } else items.push(makeItem(file, source));
     added = true;
   }
-  refreshQueue(); if (added) runQueue();
+  refreshQueue(); if (added) {
+    requestAnimationFrame(() => { const r = els.queueHead.getBoundingClientRect(); if (r.top > innerHeight * .65 || r.bottom < 0) els.queueHead.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"}); });
+    runQueue();
+  }
 }
-function clearQueue() { items.splice(0).forEach((item) => { item.cancelled = true; if (item.url) { URL.revokeObjectURL(item.url); objectUrls.delete(item.url); } item.el.remove(); }); refreshQueue(); setStep(1); }
+function clearQueue() { items.splice(0).forEach((item) => { item.cancelled = true; item.abort?.abort(); if (item.url) { URL.revokeObjectURL(item.url); objectUrls.delete(item.url); } item.el.remove(); }); refreshQueue(); setStep(1); }
 
 els.library.addEventListener("click", () => els.libraryInput.click());
 els.browse.addEventListener("click", () => els.browseInput.click());
@@ -316,7 +381,7 @@ if ("serviceWorker" in navigator) {
   const wasControlled = Boolean(navigator.serviceWorker.controller);
   let refreshing = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (!wasControlled || refreshing) return;
+    if (refreshing || (!wasControlled && globalThis.crossOriginIsolated)) return;
     if (items.length) { els.updateNotice.hidden = false; return; }
     refreshing = true; window.location.reload();
   });

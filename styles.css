@@ -12,3 +12,6 @@ main{max-width:700px;margin:0 auto}.hero-copy{text-align:center;padding-top:67px
 @media(max-width:360px){.page-shell{padding:0 18px}.privacy-pill span{max-width:72px;overflow:hidden;text-overflow:ellipsis}.header-actions{gap:8px}.photo-arrangement{transform:scale(.89)}.hero-copy h1{font-size:41px}.photo-showcase{height:252px}.hero-lede{font-size:11px}}
 html[lang="en"] .hero-copy h1{font-size:clamp(35px,7.4vw,72px);letter-spacing:-.055em}html[lang="en"] .hero-lede{max-width:520px;margin-left:auto;margin-right:auto}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+
+/* Keep output adjacent to import controls, with instructions after results. */
+.queue-head{scroll-margin-top:18px}.queue{margin-bottom:20px}.original-help{margin-top:22px}.file-status.ok+.file-help{color:var(--muted)}

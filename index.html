@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <meta name="app-version" content="20261115-4">
+  <meta name="app-version" content="20261115-5">
   <meta name="description" content="在设备本地为兼容的 iPhone HEIC 原片准备摄影风格与质感颗粒元数据。照片不会上传，原片不会覆盖。">
   <meta property="og:title" content="照片调色盘 · HEIC 摄影风格工具">
   <meta property="og:description" content="旧照片，新的表达。本机处理兼容 HEIC，保留原片，始终输出副本。">
   <meta property="og:type" content="website">
-  <link id="appManifest" rel="manifest" href="manifest.webmanifest?v=20261115-4">
-  <link rel="icon" href="icons/icon-32.png?v=20261115-4" sizes="32x32" type="image/png">
-  <link rel="icon" href="icons/icon-16.png?v=20261115-4" sizes="16x16" type="image/png">
-  <link rel="icon" href="icon.svg?v=20261115-4" sizes="any" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icons/icon-180.png?v=20261115-4" sizes="180x180">
-  <link rel="stylesheet" href="styles.css?v=20261115-4">
+  <link id="appManifest" rel="manifest" href="manifest.webmanifest?v=20261115-5">
+  <link rel="icon" href="icons/icon-32.png?v=20261115-5" sizes="32x32" type="image/png">
+  <link rel="icon" href="icons/icon-16.png?v=20261115-5" sizes="16x16" type="image/png">
+  <link rel="icon" href="icon.svg?v=20261115-5" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png?v=20261115-5" sizes="180x180">
+  <link rel="stylesheet" href="styles.css?v=20261115-5">
   <title>照片调色盘 · HEIC 摄影风格工具</title>
 </head>
 <body>
@@ -62,6 +62,12 @@
           <p class="quality-help" id="qualityHelpText" hidden data-copy="qualityHelp">首次开启会下载一个小型解码组件；照片仍只在本机读取。关闭后会使用中性设置，速度更快。</p>
         </div>
 
+        <div class="update-notice" id="updateNotice" role="status" hidden><p data-copy="updateAvailable">新版已就绪，请先下载副本后刷新。</p><button class="secondary-button" id="refreshButton" type="button" data-copy="refreshApp">刷新使用新版</button></div>
+        <div class="queue-head" id="queueHead" hidden><div><span class="section-kicker" data-copy="queueKicker">处理队列</span><strong id="queueCount">0 张照片</strong></div><button class="clear-button" id="clearButton" type="button" data-copy="clear">清空</button></div>
+        <div class="stepper" id="progressSteps" aria-hidden="true" hidden><span class="step active"><b data-copy="stepChoose">选择</b></span><span>—</span><span class="step"><b data-copy="stepCheck">检查</b></span><span>—</span><span class="step"><b data-copy="stepExport">导出</b></span></div>
+        <div class="queue" id="queue" aria-live="polite"></div>
+        <div class="empty-state" id="emptyState"><p data-copy="empty">还没有加入照片。你的文件不会被上传。</p></div>
+
         <details class="original-help" id="originalHelp">
           <summary data-copy="originalHelpTitle">相册返回 JPG？查看原片获取方法</summary>
           <p class="source-note" data-copy="guideNote">已存到“文件”的 HEIC 原片，可直接从文件导入。</p>
@@ -75,17 +81,14 @@
           </ol>
           <p data-copy="photoInfoHint">旧照片能否处理取决于实际格式与内部结构，不按拍摄年份限制。可在照片 App 打开原片，点信息按钮查看文件信息。</p>
           <p data-copy="originalWarning">存储到“文件”不会把 JPG 变成 HEIC。分享时选择“当前”是为了尽量保留原来的格式；原片本来是 JPG，保存后仍是 JPG。修改后缀也无法恢复 HEIC 编码或摄影风格元数据。</p>
+        <p class="drop-footnote" data-copy="dropFootnote">相册可能提供转换后的 JPG。我们会检查实际格式，仅处理兼容的 HEIC 原片。</p>
+        <p class="drop-footnote" data-copy="liveNotice">仅处理静态照片，实况照片的动态和声音不会包含在副本中。</p>
           <button class="secondary-button" id="helpBrowseButton" type="button" data-copy="browseOriginal">浏览文件</button>
         </details>
-        <p class="drop-footnote" data-copy="dropFootnote">相册可能提供转换后的 JPG。我们会检查实际格式，仅处理兼容的 HEIC 原片。</p>
 
-        <p class="drop-footnote" data-copy="liveNotice">仅处理静态照片，实况照片的动态和声音不会包含在副本中。</p>
 
-        <div class="update-notice" id="updateNotice" role="status" hidden><p data-copy="updateAvailable">新版已就绪，请先下载副本后刷新。</p><button class="secondary-button" id="refreshButton" type="button" data-copy="refreshApp">刷新使用新版</button></div>
-        <div class="queue-head" id="queueHead" hidden><div><span class="section-kicker" data-copy="queueKicker">处理队列</span><strong id="queueCount">0 张照片</strong></div><button class="clear-button" id="clearButton" type="button" data-copy="clear">清空</button></div>
-        <div class="stepper" aria-hidden="true"><span class="step active"><b data-copy="stepChoose">选择</b></span><span>—</span><span class="step"><b data-copy="stepCheck">检查</b></span><span>—</span><span class="step"><b data-copy="stepExport">导出</b></span></div>
-        <div class="queue" id="queue" aria-live="polite"></div>
-        <div class="empty-state" id="emptyState"><p data-copy="empty">还没有加入照片。你的文件不会被上传。</p></div>
+
+
       </section>
 
       <div class="privacy-notes"><span data-copy="footerLocal">照片不上传</span><span data-copy="footerOriginal">保留原片</span><span data-copy="footerCopy">输出副本</span></div>
@@ -107,6 +110,6 @@
     </footer>
   </div>
   <noscript><p class="noscript-notice">照片调色盘需要启用 JavaScript 才能在本机处理 HEIC 文件。照片不会上传。</p></noscript>
-  <script type="module" src="app.js?v=20261115-4"></script>
+  <script type="module" src="app.js?v=20261115-5"></script>
 </body>
 </html>
